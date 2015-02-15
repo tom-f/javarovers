@@ -20,7 +20,7 @@ public class Rover {
     private int currentX;
     private int currentY;
 
-    private char orientation;
+    private int orientation;
 
     public Rover(int maxX, int maxY, int currentX, int currentY, char currentOrientation) {
         this.maxX = maxX;
@@ -28,28 +28,29 @@ public class Rover {
 
         this.currentX = currentX;
         this.currentY = currentY;
-        this.orientation = currentOrientation;
+
+        this.orientation = orientationsList.indexOf(currentOrientation);
     }
 
     public void moveForward() {
         int newCoord;
         switch (orientation) {
-            case 'E':
+            case 1:
                 newCoord = currentX + 1;
                 testBounds(newCoord, currentY);
                 currentX = newCoord;
                 break;
-            case 'W':
+            case 3:
                 newCoord = currentX - 1;
                 testBounds(newCoord, currentY);
                 currentX = newCoord;
                 break;
-            case 'N':
+            case 0:
                 newCoord = currentY + 1;
                 testBounds(currentX, newCoord);
                 currentY = newCoord;
                 break;
-            case 'S':
+            case 2:
                 newCoord = currentY - 1;
                 testBounds(currentX, newCoord);
                 currentY = newCoord;
@@ -60,25 +61,17 @@ public class Rover {
     public void changeDirection(String direction) {
         int key = 0;
         if (direction.toLowerCase().equals("l")) {
-            key = -1;
+            key = 3;
         } else if (direction.toLowerCase().equals("r")) {
             key = 1;
         }
 
-        int newIndex = orientationsList.indexOf(orientation) + key;
-        // does key overflow?
-        if (newIndex == -1) {
-            newIndex = 3;
-        } else if (newIndex == 4) {
-            newIndex = 0;
-        }
+        orientation = (orientation + key) % 4;
 
-        // get new pos
-        orientation = orientationsList.get(newIndex);
     }
 
     public String getPosition() {
-        return this.currentX + " " + this.currentY + " " + this.orientation;
+        return this.currentX + " " + this.currentY + " " + orientationsList.get(orientation);
     }
 
     private void testBounds(int newX, int newY) {
