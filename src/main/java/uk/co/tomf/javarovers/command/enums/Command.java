@@ -7,6 +7,7 @@ public enum Command {
 
     M("m"), L("l"), R("r");
     String value;
+
     Command(String value) {
         this.value = value;
     }
@@ -24,4 +25,5 @@ public enum Command {
     public String toString() {
         return value;
     }
+
 }

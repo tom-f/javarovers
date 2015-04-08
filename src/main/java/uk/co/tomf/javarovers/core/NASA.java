@@ -2,6 +2,7 @@ package uk.co.tomf.javarovers.core;
 
 import uk.co.tomf.javarovers.command.CommandList;
 import uk.co.tomf.javarovers.command.Commander;
+import uk.co.tomf.javarovers.rover.Grid;
 import uk.co.tomf.javarovers.rover.Rover;
 
 import java.io.File;
@@ -16,29 +17,28 @@ import java.util.List;
  */
 public class NASA {
 
-    private int maxX;
-    private int maxY;
+    private Grid plateau;
 
     public NASA(File inFile) {
         try {
             List<String> lines = Files.readAllLines(Paths.get(inFile.getPath()));
-            Commander commander = new Commander();
+
             int index = 0;
             for (String line: lines) {
                 if (index == 0) { // First line is setting maxes
                     String[] maxes = line.split(" ");
-                    maxX = Integer.parseInt(maxes[0]);
-                    maxY = Integer.parseInt(maxes[1]);
+                    this.plateau = new Grid(Integer.parseInt(maxes[0]), Integer.parseInt(maxes[1]));
+
                 } else if ((index & 1) != 0) { // Odd line means we have a rover + next line = commands
                     //configure rover
                     String[] roverBits = line.split(" ");
                     Rover rover = new Rover(
-                            maxX,
-                            maxY,
                             Integer.parseInt(roverBits[0]),
                             Integer.parseInt(roverBits[1]),
                             roverBits[2].charAt(0)
                     );
+                    Commander commander = new Commander(plateau);
+
                     // build command list
                     CommandList commandList = new CommandList(lines.get(index+1));
                     commander.applyCommands(rover, commandList);
